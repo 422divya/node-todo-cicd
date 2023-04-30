@@ -16,3 +16,4 @@ id docker
 id jenkins
 reboot
 sudo reboot
+sudo su
