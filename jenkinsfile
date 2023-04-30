@@ -1,0 +1,36 @@
+pipeline {
+    
+    agent any
+    stage ('fetch code') {
+        steps{
+            echo "Codeis being fetched from github"
+            git url: "https://github.com/422divya/node-todo-cicd.git", branch: "master"
+        }
+        
+    }
+    
+    stage ('building image') {
+        steps {
+            
+            sh 'docker build . -t divya422/todo-image'
+        }
+        
+    }
+    
+    stage ('push image on registry'){
+        steps {
+            echo "login to docker hub and pushing iage to dockerhub"
+            withCredentials([usernamePassword(credentialsId: 'hub', passwordVariable: "hubpassword", usernameVariable: "docker-hub")]) {
+            sh "docker login -u ${env.docker-hub} -p {env.hubpassword}"
+            sh "docker psuh divya422/todo-image"
+         }
+        }
+    }
+    
+    stage ('Deploy the app') {
+        steps {
+            sh 'docker-compose down -d'
+            sh 'docker-compose up -d'
+        }
+    }
+}

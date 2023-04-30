@@ -1,0 +1,7 @@
+version: '3.9'
+services:
+  todo:
+    build: .
+    container_name: todo-compose
+    ports:
+      - 8000:8000
