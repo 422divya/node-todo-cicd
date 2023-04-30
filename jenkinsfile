@@ -1,9 +1,15 @@
-# jenkins file
-
 pipeline {
     
     agent any
-    stage ('fetch code') {
+    triggers {
+    githubPush()
+  }
+  
+  stages {
+      
+  
+  
+    stage('fetch code'){
         steps{
             echo "Codeis being fetched from github"
             git url: "https://github.com/422divya/node-todo-cicd.git", branch: "master"
@@ -22,9 +28,9 @@ pipeline {
     stage ('push image on registry'){
         steps {
             echo "login to docker hub and pushing iage to dockerhub"
-            withCredentials([usernamePassword(credentialsId: 'hub', passwordVariable: "hubpassword", usernameVariable: "docker-hub")]) {
-            sh "docker login -u ${env.docker-hub} -p {env.hubpassword}"
-            sh "docker psuh divya422/todo-image"
+            withCredentials([usernamePassword(credentialsId:'dochub', passwordVariable:"hubpassword", usernameVariable:"dockerhub")]) {
+            sh "docker login -u ${env.dockerhub} -p ${env.hubpassword}"
+            sh "docker push divya422/todo-image"
          }
         }
     }
@@ -35,4 +41,6 @@ pipeline {
             sh 'docker-compose up -d'
         }
     }
+ }
+
 }
